@@ -1,0 +1,1064 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Carreteras 2023-24</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f3f4f6;
+            min-height: 100vh;
+            padding: 16px;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        .header {
+            background: #1e40af;
+            color: white;
+            padding: 20px;
+            border-radius: 12px 12px 0 0;
+            text-align: center;
+        }
+        .header h1 {
+            font-size: 1.3rem;
+            margin-bottom: 4px;
+        }
+        .header p {
+            font-size: 0.85rem;
+            opacity: 0.8;
+        }
+        .progress-bar {
+            background: white;
+            padding: 12px 16px;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        .progress-text {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.85rem;
+            color: #6b7280;
+            margin-bottom: 8px;
+        }
+        .progress-track {
+            background: #e5e7eb;
+            height: 8px;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            background: #2563eb;
+            height: 100%;
+            border-radius: 4px;
+            transition: width 0.3s;
+        }
+        .question-card {
+            background: white;
+            padding: 20px;
+        }
+        .question-number {
+            display: inline-block;
+            background: #f3f4f6;
+            color: #374151;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            margin-bottom: 12px;
+        }
+        .question-text {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 20px;
+            line-height: 1.4;
+        }
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .option {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 14px;
+            border: 2px solid #e5e7eb;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s;
+            background: white;
+        }
+        .option:hover {
+            border-color: #93c5fd;
+        }
+        .option.selected {
+            border-color: #2563eb;
+            background: #eff6ff;
+        }
+        .option.correct {
+            border-color: #22c55e;
+            background: #f0fdf4;
+        }
+        .option.incorrect {
+            border-color: #ef4444;
+            background: #fef2f2;
+        }
+        .option-letter {
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #f3f4f6;
+            border-radius: 50%;
+            font-weight: 600;
+            color: #6b7280;
+            flex-shrink: 0;
+        }
+        .option-text {
+            font-size: 0.95rem;
+            color: #374151;
+            line-height: 1.4;
+        }
+        .option-icon {
+            margin-left: auto;
+            font-size: 1.2rem;
+        }
+        .explanation {
+            margin-top: 20px;
+            padding: 16px;
+            border-radius: 10px;
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+        .explanation.correct {
+            background: #f0fdf4;
+            border: 1px solid #bbf7d0;
+        }
+        .explanation.incorrect {
+            background: #fffbeb;
+            border: 1px solid #fde68a;
+        }
+        .explanation-title {
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+        .footer {
+            background: white;
+            padding: 16px;
+            border-radius: 0 0 12px 12px;
+            border-top: 1px solid #e5e7eb;
+        }
+        .btn {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-primary {
+            background: #2563eb;
+            color: white;
+        }
+        .btn-primary:hover {
+            background: #1d4ed8;
+        }
+        .btn-success {
+            background: #22c55e;
+            color: white;
+        }
+        .btn-success:hover {
+            background: #16a34a;
+        }
+        .btn:disabled {
+            background: #d1d5db;
+            color: #9ca3af;
+            cursor: not-allowed;
+        }
+        .results {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            text-align: center;
+        }
+        .results h1 {
+            font-size: 1.5rem;
+            color: #1e40af;
+            margin-bottom: 20px;
+        }
+        .score {
+            font-size: 4rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+        .score.pass {
+            color: #22c55e;
+        }
+        .score.fail {
+            color: #ef4444;
+        }
+        .score-text {
+            font-size: 1.2rem;
+            color: #6b7280;
+            margin-bottom: 20px;
+        }
+        .result-message {
+            padding: 16px;
+            border-radius: 10px;
+            margin-bottom: 24px;
+            font-weight: 500;
+        }
+        .result-message.pass {
+            background: #f0fdf4;
+            color: #166534;
+        }
+        .result-message.fail {
+            background: #fef2f2;
+            color: #991b1b;
+        }
+        .failed-questions {
+            text-align: left;
+            margin-bottom: 24px;
+        }
+        .failed-questions h3 {
+            color: #dc2626;
+            margin-bottom: 12px;
+            font-size: 1rem;
+        }
+        .failed-list {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .failed-item {
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 8px;
+            font-size: 0.85rem;
+        }
+        .failed-item p {
+            margin-bottom: 4px;
+        }
+        .failed-item .wrong {
+            color: #dc2626;
+        }
+        .failed-item .right {
+            color: #16a34a;
+        }
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Test Screen -->
+        <div id="testScreen">
+            <div class="header">
+                <h1>📝 EXAMEN 2023-24</h1>
+                <p>Ingeniería de Carreteras - UA</p>
+            </div>
+            
+            <div class="progress-bar">
+                <div class="progress-text">
+                    <span id="progressText">Pregunta 1 de 50</span>
+                    <span id="scoreText">✅ 0/0</span>
+                </div>
+                <div class="progress-track">
+                    <div class="progress-fill" id="progressFill" style="width: 2%"></div>
+                </div>
+            </div>
+            
+            <div class="question-card">
+                <div class="question-number" id="questionNumber">Pregunta 1</div>
+                <div class="question-text" id="questionText"></div>
+                <div class="options" id="optionsContainer"></div>
+                <div class="explanation hidden" id="explanation">
+                    <div class="explanation-title" id="explanationTitle"></div>
+                    <div id="explanationText"></div>
+                </div>
+            </div>
+            
+            <div class="footer">
+                <button class="btn btn-primary" id="checkBtn" onclick="checkAnswer()" disabled>Comprobar</button>
+                <button class="btn btn-success hidden" id="nextBtn" onclick="nextQuestion()">Siguiente →</button>
+            </div>
+        </div>
+        
+        <!-- Results Screen -->
+        <div id="resultsScreen" class="results hidden">
+            <h1>🎉 TEST COMPLETADO</h1>
+            <div class="score" id="finalScore">0%</div>
+            <div class="score-text" id="finalScoreText">0 de 50 correctas</div>
+            <div class="result-message" id="resultMessage"></div>
+            <div class="failed-questions" id="failedSection">
+                <h3>❌ Preguntas falladas (<span id="failedCount">0</span>):</h3>
+                <div class="failed-list" id="failedList"></div>
+            </div>
+            <button class="btn btn-primary" onclick="restartTest()">🔄 Repetir Test</button>
+        </div>
+    </div>
+
+    <script>
+        const preguntas = [
+            {
+                numero: 1,
+                pregunta: "Son características ESENCIALES de las marcas viales:",
+                opciones: [
+                    "En líneas discontinuas, el ancho, la longitud de la marca y la separación entre marcas",
+                    "El tipo de pintura, entre otras",
+                    "La retrorreflexión, la dotación de microesferas y el color",
+                    "La visibilidad diurna y la resistencia al deslizamiento, entre otras"
+                ],
+                correcta: 3,
+                explicacion: "Las características ESENCIALES son: visibilidad diurna y resistencia al deslizamiento. La retrorreflexión y microesferas son COMPLEMENTARIAS."
+            },
+            {
+                numero: 2,
+                pregunta: "Indica cuál de las siguientes funciones NO es propia de las isletas:",
+                opciones: [
+                    "Proporcionar refugio a los peatones",
+                    "Determinar los ángulos de cruce o convergencia",
+                    "Influir en la velocidad de los vehículos",
+                    "Sustituir a las marcas viales"
+                ],
+                correcta: 3,
+                explicacion: "Las isletas NO sustituyen a las marcas viales. Sus funciones son: refugio peatones, ángulos de cruce, influir en velocidad."
+            },
+            {
+                numero: 3,
+                pregunta: "La disposición de los hitos de arista viene determinada por:",
+                opciones: [
+                    "La existencia de obstáculos, báculos, etc",
+                    "Las características del trazado",
+                    "La presencia de divergencias",
+                    "La velocidad de la vía"
+                ],
+                correcta: 1,
+                explicacion: "La separación entre hitos depende de las CARACTERÍSTICAS DEL TRAZADO (radios de curva)."
+            },
+            {
+                numero: 4,
+                pregunta: "Los hitos de vértice se utilizan para:",
+                opciones: [
+                    "Balizamiento de divergencias",
+                    "Delinear divergencias",
+                    "Balizamiento de accesos",
+                    "Proteger zonas excluidas de la circulación"
+                ],
+                correcta: 0,
+                explicacion: "Los hitos de vértice se usan para BALIZAMIENTO de divergencias (narices de salida). Delinear ≠ Balizar."
+            },
+            {
+                numero: 5,
+                pregunta: "Materiales para marcas viales. Indicar INCORRECTA:",
+                opciones: [
+                    "Algunas pinturas acrílicas usan agua como disolvente",
+                    "Las microesferas se aplican en dos fases",
+                    "Algunas pinturas plásticas son de aplicación en caliente",
+                    "Las pinturas alcídicas se pueden aplicar por pulverización o extrusión"
+                ],
+                correcta: 3,
+                explicacion: "FALSO: Las pinturas ALCÍDICAS solo se aplican por PULVERIZACIÓN, NO por extrusión."
+            },
+            {
+                numero: 6,
+                pregunta: "Un enlace en trompa:",
+                opciones: [
+                    "Los dos giros a izquierda se resuelven mediante ramales semidirectos",
+                    "Resuelve uno de los giros mediante un ramal semidirecto y el otro mediante un lazo",
+                    "Todos los giros a izquierda se resuelven mediante ramales en lazo",
+                    "Precisa de dos pasos a distinto nivel"
+                ],
+                correcta: 1,
+                explicacion: "La TROMPA usa UN ramal semidirecto y UN LAZO. Solo necesita UN paso a distinto nivel."
+            },
+            {
+                numero: 7,
+                pregunta: "Indica cuál es FALSA (retrorreflexión):",
+                opciones: [
+                    "La clase mínima depende del entorno de ubicación",
+                    "Para paneles variables se exige la máxima, clase RA1",
+                    "Existen tres clases: RA1, RA2 y RA3",
+                    "Todos los elementos serán retrorreflectantes, excepto negro, azul o gris oscuro"
+                ],
+                correcta: 1,
+                explicacion: "FALSO: Los paneles variables NO exigen retrorreflexión (emiten luz propia). Además, RA1 es la mínima, no la máxima."
+            },
+            {
+                numero: 8,
+                pregunta: "Indica cuál es FALSA (TCA):",
+                opciones: [
+                    "Un TCA tiene longitud no superior a 3 km",
+                    "Los tramos serán coincidentes con los PK",
+                    "Se identificarán si hay más de 5 accidentes en gran capacidad",
+                    "El índice P es accidentes por cada 100 millones de veh-km"
+                ],
+                correcta: 2,
+                explicacion: "FALSO: En GRAN CAPACIDAD son más de 10 accidentes. En CONVENCIONALES son más de 5."
+            },
+            {
+                numero: 9,
+                pregunta: "Señalización de obras. Indica FALSA:",
+                opciones: [
+                    "No se usarán textos tipo 'Disculpen obras en 1 km'",
+                    "Los dispositivos serán según el Catálogo oficial",
+                    "Señal de prohibición debe reiterarse antes de 10 minutos",
+                    "Las marcas viales serán de color amarillo"
+                ],
+                correcta: 2,
+                explicacion: "FALSO: La señal debe reiterarse o ANULARSE antes de 10 min si ya no aplica."
+            },
+            {
+                numero: 10,
+                pregunta: "Indicar qué equipo NO es de auscultación de firmes:",
+                opciones: [
+                    "Texturómetro láser",
+                    "RPA (Road Profile Analyzer)",
+                    "Curviámetro",
+                    "Perfilómetro láser"
+                ],
+                correcta: 2,
+                explicacion: "El CURVIÁMETRO no es equipo de auscultación de firmes."
+            },
+            {
+                numero: 11,
+                pregunta: "Los paneles direccionales:",
+                opciones: [
+                    "Deben verse en ambos sentidos",
+                    "Se pueden colocar hasta tres superpuestos con 15 cm de separación",
+                    "Su separación depende de la diferencia de velocidades",
+                    "Se disponen siempre perpendiculares al conductor"
+                ],
+                correcta: 3,
+                explicacion: "Los paneles direccionales se disponen SIEMPRE perpendiculares al conductor."
+            },
+            {
+                numero: 12,
+                pregunta: "Indicar cuál es CORRECTA (marcas viales):",
+                opciones: [
+                    "Pueden ser de color blanco, amarillo o azul",
+                    "Si son blancas no necesitan ser reflectantes",
+                    "Nunca delimitan zonas excluidas",
+                    "Las dimensiones son independientes del tipo de vía"
+                ],
+                correcta: 0,
+                explicacion: "CORRECTO: Las marcas viales pueden ser BLANCO, AMARILLO o AZUL."
+            },
+            {
+                numero: 13,
+                pregunta: "Equipos de compactación. Indicar FALSA:",
+                opciones: [
+                    "Para SC y GC: vibratorio + neumáticos",
+                    "Para microaglomerados en frío se puede usar neumáticos",
+                    "En BBTM y PA solo se usan compactadores de neumáticos",
+                    "En AC: vibratorio + neumáticos"
+                ],
+                correcta: 2,
+                explicacion: "FALSO: En BBTM y PA se usa rodillo SIN VIBRACIÓN, no solo neumáticos."
+            },
+            {
+                numero: 14,
+                pregunta: "Capas granulares. Indicar FALSA:",
+                opciones: [
+                    "La zahorra es de granulometría continua",
+                    "Para tráficos bajos se pueden usar áridos reciclados",
+                    "ZAD se refiere a zahorra artificial densa",
+                    "Se limita el contenido de sulfatos"
+                ],
+                correcta: 2,
+                explicacion: "FALSO: ZAD no existe en el PG-3. Los usos son ZA20, ZA25, etc."
+            },
+            {
+                numero: 15,
+                pregunta: "Característica que NO se aplica al árido grueso para zahorras:",
+                opciones: [
+                    "Angulosidad (caras de fractura)",
+                    "Forma (índice de lajas)",
+                    "Resistencia a fragmentación (Los Ángeles)",
+                    "Resistencia al pulimento (CPA)"
+                ],
+                correcta: 3,
+                explicacion: "El CPA NO se aplica a zahorras. Es solo para capas de rodadura."
+            },
+            {
+                numero: 16,
+                pregunta: "Curado de SC y GC. Indicar CORRECTA:",
+                opciones: [
+                    "Riegos frecuentes durante 3 primeros días",
+                    "Extensión de capa superior máximo 7 días",
+                    "Prohibida circulación 3 días (todo vehículo), 7 días (pesados)",
+                    "En suelos saturados no aplicar riego"
+                ],
+                correcta: 2,
+                explicacion: "CORRECTO: Prohibida circulación de TODO vehículo 3 días, PESADOS 7 días."
+            },
+            {
+                numero: 17,
+                pregunta: "Bases tratadas. Indicar INCORRECTA:",
+                opciones: [
+                    "Se exige resistencia a 7 días",
+                    "Para SC se pueden usar todos los tipos de suelos",
+                    "GC requiere juntas en fresco",
+                    "Las bases tratadas no deben compactarse"
+                ],
+                correcta: 3,
+                explicacion: "FALSO: Las bases tratadas SÍ deben compactarse."
+            },
+            {
+                numero: 18,
+                pregunta: "Un MICROF 22 sup C60BP4 MIC es:",
+                opciones: [
+                    "Microaglomerado con árido de 22 mm",
+                    "Microaglomerado en caliente con betún modificado",
+                    "Esta mezcla no existe",
+                    "Microaglomerado con emulsión C60"
+                ],
+                correcta: 2,
+                explicacion: "Esta mezcla NO EXISTE. El tamaño máximo de MICROF es 11 mm."
+            },
+            {
+                numero: 19,
+                pregunta: "Microaglomerados en frío. Indicar FALSA:",
+                opciones: [
+                    "Fabricación con mezcladoras móviles autopropulsadas",
+                    "La mezcla puede compactarse para aumentar cohesión",
+                    "La compactación se inicia tras el período de curado",
+                    "Al abrir al tráfico hay desprendimiento de árido"
+                ],
+                correcta: 2,
+                explicacion: "FALSO: La compactación NO se hace tras el curado, sino ANTES."
+            },
+            {
+                numero: 20,
+                pregunta: "NO es criterio para selección del betún:",
+                opciones: [
+                    "La zona térmica estival",
+                    "La capa del firme destino",
+                    "El tipo de tráfico pesado",
+                    "La temperatura de extendido"
+                ],
+                correcta: 3,
+                explicacion: "La TEMPERATURA DE EXTENDIDO no es criterio de selección del betún."
+            },
+            {
+                numero: 21,
+                pregunta: "Juntas en mezclas bituminosas. Indicar FALSA:",
+                opciones: [
+                    "Se extiende siguiente franja con borde caliente",
+                    "Junta fría: cortar, riego adherencia, calentar",
+                    "En drenantes se evitan juntas longitudinales",
+                    "Las juntas entre capas deben coincidir"
+                ],
+                correcta: 3,
+                explicacion: "FALSO: Las juntas entre capas deben estar DESFASADAS, no coincidir."
+            },
+            {
+                numero: 22,
+                pregunta: "Juntas en pavimentos de hormigón. Indicar INCORRECTA:",
+                opciones: [
+                    "Longitudinales: barras corrugadas 12 mm, 80 cm, cada 1 m",
+                    "Deben coincidir con separaciones entre carriles",
+                    "Llevan barras corrugadas o no según categoría tráfico",
+                    "Pasadores transversales: acero liso 25 mm, 50 cm"
+                ],
+                correcta: 2,
+                explicacion: "FALSO: Juntas longitudinales SIEMPRE llevan barras corrugadas."
+            },
+            {
+                numero: 23,
+                pregunta: "Textura de pavimentos de hormigón se obtiene mediante:",
+                opciones: [
+                    "Eliminación del mortero",
+                    "Por fratasado",
+                    "Adecuada dosificación de áridos",
+                    "Deslizando arpillera tras el carro"
+                ],
+                correcta: 3,
+                explicacion: "La textura se obtiene con ARPILLERA o cepillo arrastrado tras el extendido."
+            },
+            {
+                numero: 24,
+                pregunta: "Método de medida de densidad en rellenos:",
+                opciones: [
+                    "CBR",
+                    "Método de la arena",
+                    "Método atómico",
+                    "Placa de carga"
+                ],
+                correcta: 1,
+                explicacion: "El MÉTODO DE LA ARENA mide densidad. CBR mide capacidad portante."
+            },
+            {
+                numero: 25,
+                pregunta: "Característica NO adecuada para clasificar suelo para terraplén:",
+                opciones: [
+                    "Cohesión",
+                    "Contenido en sales y materia orgánica",
+                    "Hinchamiento e índice plasticidad",
+                    "Tamaño máximo de árido"
+                ],
+                correcta: 0,
+                explicacion: "La COHESIÓN no es característica de clasificación de suelos según PG-3."
+            },
+            {
+                numero: 26,
+                pregunta: "Las zonas de un pedraplén son:",
+                opciones: [
+                    "Cimiento, núcleo y coronación",
+                    "Cimiento, arranque, núcleo, espaldones y coronación",
+                    "Cimiento, núcleo y explanación",
+                    "Cimiento, arranque, núcleo, espaldones, transición y coronación"
+                ],
+                correcta: 3,
+                explicacion: "El pedraplén tiene 6 zonas: Cimiento, Arranque, Núcleo, Espaldones, TRANSICIÓN y Coronación."
+            },
+            {
+                numero: 27,
+                pregunta: "Control de compactación de pedraplén se realiza:",
+                opciones: [
+                    "Por procedimiento en tramo de prueba",
+                    "Topográficamente",
+                    "Mediante densidad Proctor",
+                    "Mediante ensayo placa de carga"
+                ],
+                correcta: 0,
+                explicacion: "En pedraplenes se controla por PROCEDIMIENTO contrastado en tramo de prueba."
+            },
+            {
+                numero: 28,
+                pregunta: "Rellenos localizados. Indicar CORRECTA:",
+                opciones: [
+                    "Se usan mismos suelos del relleno adyacente",
+                    "Las cuñas de transición no son rellenos localizados",
+                    "Tongadas a ambos lados al mismo nivel",
+                    "Se usan mismos equipos que el resto"
+                ],
+                correcta: 2,
+                explicacion: "CORRECTO: Las tongadas junto a obras de fábrica deben estar al MISMO NIVEL."
+            },
+            {
+                numero: 29,
+                pregunta: "Selección conglomerante en estabilización. Indicar FALSA:",
+                opciones: [
+                    "Cal es adecuada para suelos finos y plásticos",
+                    "Cemento es adecuado para suelos gruesos",
+                    "La cal no es adecuada para secar suelos",
+                    "Con cemento se logra mayor resistencia"
+                ],
+                correcta: 2,
+                explicacion: "FALSO: La cal SÍ es adecuada para SECAR suelos húmedos."
+            },
+            {
+                numero: 30,
+                pregunta: "Indicar CORRECTA (estabilización):",
+                opciones: [
+                    "Se realiza con mezcla en central",
+                    "Con cemento la dotación debe ser superior al 3%",
+                    "La cal es más adecuada para suelos plásticos",
+                    "S-EST 3 puede obtenerse con cemento o cal"
+                ],
+                correcta: 2,
+                explicacion: "CORRECTO: La CAL es más adecuada para suelos PLÁSTICOS."
+            },
+            {
+                numero: 31,
+                pregunta: "Indicar INCORRECTA (S-EST):",
+                opciones: [
+                    "S-EST 1 y 2 son suelos mejorados",
+                    "S-EST 3 es estabilizado con resistencia mínima",
+                    "S-EST 3 permite la mejor explanada",
+                    "En una sección solo se usa un tipo de S-EST"
+                ],
+                correcta: 3,
+                explicacion: "FALSO: Se PUEDEN usar distintos tipos de S-EST en una misma sección."
+            },
+            {
+                numero: 32,
+                pregunta: "Indicar INCORRECTA (estabilización):",
+                opciones: [
+                    "Se realiza in situ",
+                    "El cemento es más adecuado para suelos plásticos",
+                    "La dotación de cemento no suele superar el 3%",
+                    "S-EST 2 puede obtenerse con cemento o cal"
+                ],
+                correcta: 1,
+                explicacion: "FALSO: El CEMENTO es para suelos GRUESOS. La CAL para plásticos."
+            },
+            {
+                numero: 33,
+                pregunta: "Cuál de estos ramales tiene mayor capacidad:",
+                opciones: [
+                    "Lazo",
+                    "Asa interior",
+                    "Asa exterior",
+                    "Semidirecto"
+                ],
+                correcta: 3,
+                explicacion: "SEMIDIRECTO tiene mayor capacidad. Orden: Directo > Semidirecto > Asa ext > Asa int > Lazo."
+            },
+            {
+                numero: 34,
+                pregunta: "Velocidad para determinar el IRI:",
+                opciones: [
+                    "80 km/h",
+                    "20 km/h",
+                    "50 km/h",
+                    "Velocidad de proyecto"
+                ],
+                correcta: 0,
+                explicacion: "El IRI se determina a 80 km/h. El CRT se mide a 50 km/h."
+            },
+            {
+                numero: 35,
+                pregunta: "Hitos de arista:",
+                opciones: [
+                    "Doble sentido: blancos rectangulares derecha, amarillos circulares izquierda",
+                    "Amarillos derecha y blancos izquierda en ambos casos",
+                    "Sentido único: amarillos en ambos bordes",
+                    "Ninguna es correcta"
+                ],
+                correcta: 0,
+                explicacion: "En DOBLE sentido: derecha = rectangular BLANCO, izquierda = circular AMARILLO."
+            },
+            {
+                numero: 36,
+                pregunta: "Un ramal en lazo... Indicar INCORRECTA:",
+                opciones: [
+                    "Presenta capacidad alta",
+                    "Tiene gran desarrollo angular",
+                    "No cruza ninguna otra trayectoria",
+                    "Ocupa un solo cuadrante"
+                ],
+                correcta: 0,
+                explicacion: "FALSO: El lazo tiene capacidad BAJA, no alta."
+            },
+            {
+                numero: 37,
+                pregunta: "Suelos marginales en terraplenes:",
+                opciones: [
+                    "El PG-3 dice que no deben emplearse",
+                    "Los colapsables pueden ir en coronación",
+                    "Los expansivos se compactan del lado seco",
+                    "Con yesos hay que considerar contaminación de terrenos"
+                ],
+                correcta: 3,
+                explicacion: "CORRECTO: Los suelos con yesos pueden contaminar terrenos colindantes."
+            },
+            {
+                numero: 38,
+                pregunta: "Suelocemento y gravacemento. Indicar FALSA:",
+                opciones: [
+                    "La mezcla se realiza en central",
+                    "No debe usarse como capa estructural",
+                    "Para SC puede usarse suelo granular",
+                    "En GC se usa árido de trituración"
+                ],
+                correcta: 1,
+                explicacion: "FALSO: SC y GC SÍ son capas estructurales del firme."
+            },
+            {
+                numero: 39,
+                pregunta: "Ejecución de suelos estabilizados. Indicar FALSA:",
+                opciones: [
+                    "Mezcla in situ solo para T3 o inferior",
+                    "Dosificación en lechada más efectiva que vía seca",
+                    "Un suelo no puede estabilizarse con cal y luego cemento",
+                    "Puede permanecer sin compactar si no se ha humectado"
+                ],
+                correcta: 2,
+                explicacion: "FALSO: SÍ se puede estabilizar primero con cal y después con cemento."
+            },
+            {
+                numero: 40,
+                pregunta: "Aditivos en microaglomerados en frío. Indicar FALSA:",
+                opciones: [
+                    "Prolongar el tiempo de curado",
+                    "Mejorar la cohesión",
+                    "Mejorar resistencia mecánica a corto plazo",
+                    "Regular la rotura de la emulsión"
+                ],
+                correcta: 0,
+                explicacion: "FALSO: Los aditivos buscan REDUCIR el curado, no prolongarlo."
+            },
+            {
+                numero: 41,
+                pregunta: "Riegos con emulsiones. Indicar INCORRECTA:",
+                opciones: [
+                    "Cisternas calorifugadas y siempre rampa de riego",
+                    "Con capas drenantes se exigen emulsiones modificadas",
+                    "Dotación de imprimación: lo que absorba en 24h",
+                    "Dotación de adherencia: ligante residual en g/m²"
+                ],
+                correcta: 0,
+                explicacion: "NO siempre se necesita rampa de riego, depende del tipo."
+            },
+            {
+                numero: 42,
+                pregunta: "Zonas de terraplén. Indicar FALSA:",
+                opciones: [
+                    "Coronación: mínimo 2 tongadas y >50 cm",
+                    "Núcleo entre cimiento y coronación",
+                    "Espaldón: parte exterior con revestimientos",
+                    "Cimiento: espesor mínimo 1 metro"
+                ],
+                correcta: 3,
+                explicacion: "FALSO: El cimiento NO tiene espesor mínimo de 1 metro fijo."
+            },
+            {
+                numero: 43,
+                pregunta: "Precauciones desmonte-terraplén. Indicar FALSA:",
+                opciones: [
+                    "Transición escalonada",
+                    "Excavación ampliada hasta que penetre la coronación",
+                    "Apoyo de coronación y fondo en planos distintos",
+                    "Cuidar drenaje para evitar saturación"
+                ],
+                correcta: 2,
+                explicacion: "FALSO: Deben estar en el MISMO PLANO, no en planos distintos."
+            },
+            {
+                numero: 44,
+                pregunta: "Riegos de adherencia. Indicar FALSA:",
+                opciones: [
+                    "Emulsión sobre capa tratada previa a capa bituminosa",
+                    "Bajo capas drenantes: emulsiones modificadas obligatorias",
+                    "Coordinar para que haya rotura sin perder efectividad",
+                    "Árido de cobertura se extiende 24h después si es necesario"
+                ],
+                correcta: 3,
+                explicacion: "FALSO: El árido de cobertura se extiende INMEDIATAMENTE si es necesario."
+            },
+            {
+                numero: 45,
+                pregunta: "Ventajas equipos de transferencia. Indicar INCORRECTA:",
+                opciones: [
+                    "Permite precompactación de la mezcla",
+                    "Maniobra de aproximación más simple",
+                    "Posibilita almacenaje para operación continua",
+                    "Garantiza uniformidad al rehomogeneizar"
+                ],
+                correcta: 0,
+                explicacion: "FALSO: Los equipos de transferencia NO precompactan."
+            },
+            {
+                numero: 46,
+                pregunta: "Drenaje plataforma. Indicar FALSA:",
+                opciones: [
+                    "No recoger caudales ajenos a plataforma",
+                    "En excepciones la lámina puede alcanzar el arcén",
+                    "Evitar grandes caudales con desagüe frecuente",
+                    "Punto de vertido puede estar en ODT"
+                ],
+                correcta: 1,
+                explicacion: "FALSO: La lámina de agua NUNCA debe alcanzar el arcén."
+            },
+            {
+                numero: 47,
+                pregunta: "Señales en márgenes. Indicar FALSA:",
+                opciones: [
+                    "Altura básica es de la letra mayúscula mayor",
+                    "En convencionales se colocan en margen derecho",
+                    "Se colocan siempre perpendiculares a la trayectoria",
+                    "Carteles sobre calzada inclinados en desplome"
+                ],
+                correcta: 2,
+                explicacion: "FALSO: Perpendiculares EXCEPTO carteles flecha."
+            },
+            {
+                numero: 48,
+                pregunta: "Estudio geotécnico adecuado requiere:",
+                opciones: [
+                    "Correcto replanteo del eje",
+                    "Abarcar todas las alternativas de trazado",
+                    "Confirmar parámetros durante construcción",
+                    "Si hay estudio informativo, no hace falta otro"
+                ],
+                correcta: 1,
+                explicacion: "Debe abarcar TODAS las alternativas de trazado contempladas."
+            },
+            {
+                numero: 49,
+                pregunta: "Compactación mezclas AC. Indicar CORRECTA:",
+                opciones: [
+                    "A la mayor temperatura posible",
+                    "Hasta alcanzar densidad Proctor",
+                    "Detenerse si T ambiente supera 20°C",
+                    "Terminar siempre con rodillo liso"
+                ],
+                correcta: 0,
+                explicacion: "CORRECTO: La compactación debe hacerse a la MAYOR temperatura posible."
+            },
+            {
+                numero: 50,
+                pregunta: "Pavimentos de hormigón. Indicar CORRECTA:",
+                opciones: [
+                    "Siempre losas en masa con juntas transversales",
+                    "Se compacta con rodillos lisos",
+                    "Algunos se construyen sin juntas transversales",
+                    "No están recogidos en el PG-3"
+                ],
+                correcta: 2,
+                explicacion: "CORRECTO: El hormigón armado continuo se construye SIN juntas transversales."
+            }
+        ];
+
+        let currentQuestion = 0;
+        let score = 0;
+        let answered = 0;
+        let selectedOption = null;
+        let isChecked = false;
+        let failedQuestions = [];
+
+        function renderQuestion() {
+            const q = preguntas[currentQuestion];
+            document.getElementById('progressText').textContent = `Pregunta ${currentQuestion + 1} de ${preguntas.length}`;
+            document.getElementById('scoreText').textContent = `✅ ${score}/${answered}`;
+            document.getElementById('progressFill').style.width = `${((currentQuestion + 1) / preguntas.length) * 100}%`;
+            document.getElementById('questionNumber').textContent = `Pregunta ${q.numero}`;
+            document.getElementById('questionText').textContent = q.pregunta;
+            
+            const optionsHtml = q.opciones.map((opt, i) => `
+                <div class="option" onclick="selectOption(${i})" id="option${i}">
+                    <div class="option-letter">${String.fromCharCode(65 + i)}</div>
+                    <div class="option-text">${opt}</div>
+                    <div class="option-icon" id="icon${i}"></div>
+                </div>
+            `).join('');
+            document.getElementById('optionsContainer').innerHTML = optionsHtml;
+            
+            document.getElementById('explanation').classList.add('hidden');
+            document.getElementById('checkBtn').classList.remove('hidden');
+            document.getElementById('checkBtn').disabled = true;
+            document.getElementById('nextBtn').classList.add('hidden');
+            
+            selectedOption = null;
+            isChecked = false;
+        }
+
+        function selectOption(index) {
+            if (isChecked) return;
+            
+            document.querySelectorAll('.option').forEach(opt => opt.classList.remove('selected'));
+            document.getElementById(`option${index}`).classList.add('selected');
+            selectedOption = index;
+            document.getElementById('checkBtn').disabled = false;
+        }
+
+        function checkAnswer() {
+            if (selectedOption === null || isChecked) return;
+            isChecked = true;
+            answered++;
+            
+            const q = preguntas[currentQuestion];
+            const isCorrect = selectedOption === q.correcta;
+            
+            if (isCorrect) {
+                score++;
+                document.getElementById(`option${selectedOption}`).classList.add('correct');
+                document.getElementById(`icon${selectedOption}`).textContent = '✓';
+            } else {
+                document.getElementById(`option${selectedOption}`).classList.add('incorrect');
+                document.getElementById(`icon${selectedOption}`).textContent = '✗';
+                document.getElementById(`option${q.correcta}`).classList.add('correct');
+                document.getElementById(`icon${q.correcta}`).textContent = '✓';
+                
+                failedQuestions.push({
+                    numero: q.numero,
+                    pregunta: q.pregunta,
+                    tuRespuesta: q.opciones[selectedOption],
+                    correcta: q.opciones[q.correcta]
+                });
+            }
+            
+            document.getElementById('scoreText').textContent = `✅ ${score}/${answered}`;
+            
+            const explanation = document.getElementById('explanation');
+            explanation.classList.remove('hidden', 'correct', 'incorrect');
+            explanation.classList.add(isCorrect ? 'correct' : 'incorrect');
+            document.getElementById('explanationTitle').textContent = isCorrect ? '✅ ¡Correcto!' : '❌ Incorrecto';
+            document.getElementById('explanationText').textContent = q.explicacion;
+            
+            document.getElementById('checkBtn').classList.add('hidden');
+            document.getElementById('nextBtn').classList.remove('hidden');
+            document.getElementById('nextBtn').textContent = currentQuestion + 1 >= preguntas.length ? 'Ver Resultados' : 'Siguiente →';
+        }
+
+        function nextQuestion() {
+            if (currentQuestion + 1 >= preguntas.length) {
+                showResults();
+            } else {
+                currentQuestion++;
+                renderQuestion();
+            }
+        }
+
+        function showResults() {
+            document.getElementById('testScreen').classList.add('hidden');
+            document.getElementById('resultsScreen').classList.remove('hidden');
+            
+            const percentage = Math.round((score / answered) * 100);
+            const scoreEl = document.getElementById('finalScore');
+            scoreEl.textContent = `${percentage}%`;
+            scoreEl.className = `score ${percentage >= 50 ? 'pass' : 'fail'}`;
+            
+            document.getElementById('finalScoreText').textContent = `${score} de ${answered} correctas`;
+            
+            const msgEl = document.getElementById('resultMessage');
+            if (percentage >= 70) {
+                msgEl.textContent = '¡Muy bien! Vas preparado 💪';
+                msgEl.className = 'result-message pass';
+            } else if (percentage >= 50) {
+                msgEl.textContent = 'Aprobado justo, repasa los fallos 📚';
+                msgEl.className = 'result-message pass';
+            } else {
+                msgEl.textContent = 'Necesitas repasar más 🔄';
+                msgEl.className = 'result-message fail';
+            }
+            
+            document.getElementById('failedCount').textContent = failedQuestions.length;
+            
+            if (failedQuestions.length > 0) {
+                document.getElementById('failedSection').classList.remove('hidden');
+                const failedHtml = failedQuestions.map(f => `
+                    <div class="failed-item">
+                        <p><strong>P${f.numero}:</strong> ${f.pregunta.substring(0, 60)}...</p>
+                        <p class="wrong">Tu respuesta: ${f.tuRespuesta.substring(0, 40)}...</p>
+                        <p class="right">Correcta: ${f.correcta.substring(0, 40)}...</p>
+                    </div>
+                `).join('');
+                document.getElementById('failedList').innerHTML = failedHtml;
+            } else {
+                document.getElementById('failedSection').classList.add('hidden');
+            }
+        }
+
+        function restartTest() {
+            currentQuestion = 0;
+            score = 0;
+            answered = 0;
+            selectedOption = null;
+            isChecked = false;
+            failedQuestions = [];
+            
+            document.getElementById('resultsScreen').classList.add('hidden');
+            document.getElementById('testScreen').classList.remove('hidden');
+            renderQuestion();
+        }
+
+        // Iniciar
+        renderQuestion();
+    </script>
+</body>
+</html>
